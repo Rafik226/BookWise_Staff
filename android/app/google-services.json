@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "395959080272",
+    "project_id": "bookwise-d67aa",
+    "storage_bucket": "bookwise-d67aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395959080272:android:3a251e6a46012d464cc855",
+        "android_client_info": {
+          "package_name": "com.example.bookwise_member"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT7dBkUJ93OOUglWdraG9Nczi8eAsmgq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395959080272:android:2bad6b74ae53d3b24cc855",
+        "android_client_info": {
+          "package_name": "com.example.bookwise_staff"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAT7dBkUJ93OOUglWdraG9Nczi8eAsmgq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
