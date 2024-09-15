@@ -2,7 +2,6 @@ import 'package:bookwise_staff/models/librarian_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:bookwise_staff/models/staff_model.dart';
 
 class EditProfilePage extends StatefulWidget {
   final StaffModel staff;
@@ -150,11 +149,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _updateProfile,
-                child: const Text('Save Changes'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
                 ),
+                child: const Text('Save Changes'),
               ),
             ],
           ),

@@ -17,32 +17,63 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
+  String emailError = '';
+  String passwordError = '';
 
-void signInWithEmailAndPassword() async {
-  setState(() {
-    isLoading = true; // Montre un indicateur de chargement
-  });
+  // Fonction de validation
+  bool validateInputs() {
+    bool isValid = true;
+    setState(() {
+      emailError = '';
+      passwordError = '';
 
-  String response = await AuthService().signInWithEmailAndPassword(
-    emailController.text,
-    passwordController.text,
-  );
+      if (emailController.text.isEmpty) {
+        emailError = 'L\'adresse e-mail est obligatoire';
+        isValid = false;
+      } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailController.text)) {
+        emailError = 'Adresse e-mail invalide';
+        isValid = false;
+      }
 
-  if (!mounted) return; // Vérifie si le widget est toujours monté avant d'appeler setState
-
-  setState(() {
-    isLoading = false; // Arrête l'indicateur de chargement après la réponse
-  });
-
-  if (response == "Connexion réussie") {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const DashboardScreen()),
-    );
-  } else {
-    showSnackBar(context, response);
+      if (passwordController.text.isEmpty) {
+        passwordError = 'Le mot de passe est obligatoire';
+        isValid = false;
+      } else if (passwordController.text.length < 6) {
+        passwordError = 'Le mot de passe doit contenir au moins 6 caractères';
+        isValid = false;
+      }
+    });
+    return isValid;
   }
-}
+
+  void signInWithEmailAndPassword() async {
+    if (!validateInputs()) return; // Valide les entrées avant de se connecter
+
+    setState(() {
+      isLoading = true; // Affiche un indicateur de chargement
+    });
+
+    String response = await AuthService().signInWithEmailAndPassword(
+      context, // Ajoute context ici pour l'utilisation dans AuthService
+      emailController.text,
+      passwordController.text,
+    );
+
+    if (!mounted) return; // Vérifie si le widget est toujours monté
+
+    setState(() {
+      isLoading = false; // Arrête l'indicateur de chargement après la réponse
+    });
+
+    if (response == "Connexion réussie") {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
+      );
+    } else {
+      showSnackBar(context, response);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,26 +91,47 @@ void signInWithEmailAndPassword() async {
                   height: height / 3,
                   child: Image.asset("assets/logo.png"),
                 ),
-                // Champ pour l'adresse e-mail
+                // Champ pour l'adresse e-mail avec message d'erreur
                 TextFieldInputs(
                   textEditingController: emailController,
                   hintText: 'Entrer votre adresse e-mail',
                   icon: Icons.email,
                   obscureText: false,
+                  errorText: emailError, // Affichage des erreurs
                 ),
-                // Champ pour le mot de passe
+                if (emailError.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      emailError,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                // Champ pour le mot de passe avec message d'erreur
                 TextFieldInputs(
                   textEditingController: passwordController,
                   hintText: 'Entrer votre mot de passe',
                   icon: Icons.lock,
                   obscureText: true,
+                  errorText: passwordError, // Affichage des erreurs
                 ),
-                SizedBox(height: 20),
-                MyButton(
-                  onTapp: signInWithEmailAndPassword,
-                  text: "Connexion avec E-mail",
-                ),
-                SizedBox(height: 20),
+                if (passwordError.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      passwordError,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                const SizedBox(height: 20),
+                // Bouton de connexion avec indicateur de chargement
+                isLoading
+                    ? const CircularProgressIndicator()
+                    : MyButton(
+                        onTapp: signInWithEmailAndPassword,
+                        text: "Connexion avec E-mail",
+                      ),
+                const SizedBox(height: 20),
                 // Lien pour la réinitialisation du mot de passe
                 TextButton(
                   onPressed: () {

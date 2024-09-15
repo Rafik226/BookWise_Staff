@@ -1,9 +1,8 @@
 class CategoryModel {
-  final String id, image, name;
+  final String id, categoryName;
 
   CategoryModel({
     required this.id,
-    required this.image,
-    required this.name,
+    required this.categoryName,
   });
 }

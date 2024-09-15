@@ -11,7 +11,7 @@ class TextFieldInputs extends StatelessWidget {
     required this.textEditingController,
     this.isPass = false,
     required this.hintText,
-    required this.icon, required bool obscureText,
+    required this.icon, required bool obscureText, required String errorText,
   });
 
   @override

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bookwise_staff/screens/book_management/search_book.dart';
 import 'package:bookwise_staff/services/my_app_method.dart';
 import 'package:bookwise_staff/models/book_model.dart';
 import 'package:bookwise_staff/services/loading_manager.dart';
@@ -31,8 +32,8 @@ class _EditOrUploadBookScreenState extends State<EditOrUploadBookScreen> {
   String? bookNetworkImage;
   List<String> _categories = [];
   String? _selectedCategory;
-  String? libraryName; // Utilisez cette variable pour stocker le nom de la bibliothèque
-
+  String?
+      libraryName; // Utilisez cette variable pour stocker le nom de la bibliothèque
   late TextEditingController _titleController,
       _authorController,
       _descriptionController,
@@ -246,7 +247,7 @@ class _EditOrUploadBookScreenState extends State<EditOrUploadBookScreen> {
           'bookTitle': _titleController.text,
           'bookAuthor': _authorController.text,
           'bookImage': bookImageUrl ?? bookNetworkImage,
-          'libraryName': libraryName, 
+          'libraryName': libraryName,
           'bookCategory': _selectedCategory,
           'bookDescription': _descriptionController.text,
           'bookQuantity': _quantityController.text,
@@ -285,6 +286,7 @@ class _EditOrUploadBookScreenState extends State<EditOrUploadBookScreen> {
       }
     }
   }
+
   Future<void> localImagePicker() async {
     final ImagePicker picker = ImagePicker();
     await MyAppMethods.imagePickerDialog(
@@ -307,6 +309,17 @@ class _EditOrUploadBookScreenState extends State<EditOrUploadBookScreen> {
         });
       },
     );
+  }
+
+// Fonction pour supprimer un livre de Firestore
+  Future<void> deleteBook(String bookId) async {
+    try {
+      // Accéder à la collection des livres et supprimer le document avec l'ID spécifié
+      await FirebaseFirestore.instance.collection('books').doc(bookId).delete();
+      print("Livre supprimé avec succès.");
+    } catch (e) {
+      print("Erreur lors de la suppression du livre : $e");
+    }
   }
 
   @override
@@ -540,14 +553,34 @@ class _EditOrUploadBookScreenState extends State<EditOrUploadBookScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    icon: const Icon(Icons.clear),
-                    label: const Text(
-                      "Effacer",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    onPressed: clearForm,
+                    icon: widget.bookModel == null
+                        ? const Icon(Icons.clear_sharp) // Icône pour "Effacer"
+                        : const Icon(Icons.delete), // Icône pour "Supprimer"
+                    label: widget.bookModel == null
+                        ? const Text(
+                            // Texte pour "Effacer"
+                            "Effacer",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          )
+                        : const Text(
+                            // Texte pour "Supprimer"
+                            "Supprimer",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                    onPressed: widget.bookModel == null
+                        ? clearForm // Fonction pour "Effacer"
+                        : () {
+                            deleteBook(widget.bookModel!
+                                .bookId); // Fonction pour "Supprimer"
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchBook()));
+                          },
                   ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
